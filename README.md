@@ -43,6 +43,12 @@ $ luarocks install cudnn
 ```
 
 # How to train
+#### Data Pre-processing
+As we will not train the encoder part, we need to extract CNN features from raw images. To use the feature extractor:
+```
+$ th feature_extractor.lua -imagePath path/to/images -outPath path/to/feature -model path/to/model
+```
+The script will extract features from images and save it in the folder you specify.
 
 
 # How to test
