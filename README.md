@@ -42,10 +42,10 @@ Then install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
 $ luarocks install cudnn
 ```
 
-# Train your own model
+# How to train
 
 
-# Test the model
+# How to test
 
 
 # License
