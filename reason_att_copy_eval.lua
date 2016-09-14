@@ -60,7 +60,6 @@ function beam_search(model, dataloader, opt)
     end
 
     local START, END = 1, #dataloader.val_set
-    -- local START, END = 1, 30
     local BATCH_MODE, BATCH_NUM, MY_BATCH_NUM = false, 2, 1
     local fout
     local captions = {}
@@ -235,6 +234,8 @@ function beam_search(model, dataloader, opt)
         else
             table.insert(captions, {image_id = dataloader.val_set[i], caption = caption})
         end
+
+        if i > 10 then break end -- DEBUG ONLY!
     end
     if BATCH_MODE then
         fout:close()
