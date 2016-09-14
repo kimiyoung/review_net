@@ -36,15 +36,16 @@ To make things even faster, you can also install NVIDIA cuDNN libraries. You sho
 * Install cuDNN (version R5 EA)
 * Have at least CUDA 7.0
 * Have `libcudnn.so` in your library path (Install it from https://developer.nvidia.com/cuDNN )
+
 Then install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
 ```
 $ luarocks install cudnn
 ```
 
-# How to train
+# Train your own model
 
 
-# How to test
+# Test the model
 
 
 # License
