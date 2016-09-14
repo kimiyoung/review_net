@@ -7,14 +7,7 @@ local eval_utils = require 'eval.neuraltalk2.misc.utils'
 local tablex = require 'pl.tablex'
 
 local M = {}
--- local ATT_NEXT_H = false
 
--- cmd:option('-emb_size', 100, 'Word embedding size')
--- cmd:option('-lstm_size', 4096, 'LSTM size')
--- cmd:option('-word_cnt', 9520, 'Vocabulary size')
--- cmd:option('-att_size', 196, 'Attention size')
--- cmd:option('-feat_size', 512, 'Feature size for each attention')
--- cmd:option('-batch_size', 32, 'Batch size in SGD')
 function M.lstm(opt)
     -- Model parameters
     local rnn_size = opt.lstm_size
