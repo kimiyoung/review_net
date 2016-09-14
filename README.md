@@ -17,6 +17,13 @@ $ source ~/.bashrc
 ```
 
 #### Torch Packages
+Then we need to get some packages for Torch using [LuaRocks](https://luarocks.org/):
+```
+$ luarocks install nn
+$ luarocks install nngraph 
+$ luarocks install image 
+$ luarocks install paths
+```
 
 
 # How to train
