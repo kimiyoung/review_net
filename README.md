@@ -32,7 +32,11 @@ $ luarocks install cutorch
 $ luarocks install cunn
 ```
 
-To make things even faster, you can also install NVIDIA cuDNN libraries. First, install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
+To make things even faster, you can also install NVIDIA cuDNN libraries. You should: 
+* Install cuDNN (version R5 EA)
+* Have at least CUDA 7.0
+* Have `libcudnn.so` in your library path (Install it from https://developer.nvidia.com/cuDNN )
+Then install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
 ```
 $ luarocks install cudnn
 ```
