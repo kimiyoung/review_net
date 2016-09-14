@@ -19,10 +19,10 @@ cmd:option('-imagePath',
            '/usr1/public/zhiliny/ImageCaptioning/data/train2014/', 
            'Folder of input images')
 cmd:option('-outPath', 
-           '../data/train2014_features_vgg_vd19_fc7/',
+           'data/train2014_features_vgg_vd19_fc7_test/',
            'path to save feature vectors') 
 cmd:option('-model', 
-           '../models/vgg_vd19_fc7.t7',
+           'models/vgg_vd19_fc7.t7',
            'path to models') 
 
 
@@ -87,6 +87,11 @@ end
 local model = torch.load(opt.model)
 print('=> Model')
 print(model)
+
+-- create folders --
+if not paths.dirp(opt.outPath) then
+    paths.mkdir(opt.outPath)
+end
 
 local idx = 1
 local files = {}
