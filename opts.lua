@@ -26,7 +26,7 @@ function M.parse(arg)
     cmd:option('-reason_step', 8, 'Reasoning steps before the decoder')
 
     ------------ General options --------------------
-    cmd:option('-data', 'data/', 'Path to dataset')
+    cmd:option('-data', '/usr1/public/zhiliny/ImageCaptioning/data/', 'Path to dataset')
     cmd:option('-train_feat', 'train2014_features_vgg_vd19_conv5', 'Path to pre-extracted training image feature')
     cmd:option('-val_feat', 'val2014_features_vgg_vd19_conv5', 'Path to pre-extracted validation image feature')
     cmd:option('-test_feat', 'test2014_features_vgg_vd19_conv5_2nd', 'Path to pre-extracted test image feature')
