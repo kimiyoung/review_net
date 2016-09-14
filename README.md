@@ -25,15 +25,17 @@ $ luarocks install image
 $ luarocks install paths
 ```
 
-#### CUDA and cuDNN
+#### GPU Support
 If you want to use NVIDIA GPUs to accelerate trainig and testing, you will also need to install following packages:
 ```
 $ luarocks install cutorch
 $ luarocks install cunn
 ```
 
-To make things even faster, you can also install NVIDIA cuDNN libraries. 
-
+To make things even faster, you can also install NVIDIA cuDNN libraries. First, install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
+```
+$ luarocks install cudnn
+```
 
 # How to train
 
