@@ -22,7 +22,7 @@ function M.parse(arg)
     cmd:option('-use_noun', true, 'Use noun or not') -- true
     cmd:option('-reason_weight', 10.0, 'weight of reasoning loss')
 
-    cmd:option('-model_pack', 'soft_att_lstm', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
+    cmd:option('-model_pack', 'reason_att', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
     cmd:option('-reason_step', 8, 'Reasoning steps before the decoder')
 
     ------------ General options --------------------
