@@ -1,2 +1,2 @@
-# review_base_release
+# ReviewNet
 Reviewer Module for Caption Generation
