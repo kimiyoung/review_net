@@ -214,6 +214,8 @@ function beam_search(model, dataloader, opt)
                    
         -- Next image
         i = i + 1
+
+        if i == 10 then break end -- DEBUG!!! remember to clear
     end
     -- Evaluate it
     local eval_struct = M.language_eval(captions, 'beam_' .. beam_size .. ' ' .. opt.model)
