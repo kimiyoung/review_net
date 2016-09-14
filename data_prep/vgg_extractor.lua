@@ -1,5 +1,4 @@
 require 'torch'
-require 'inn'
 require 'nn'
 require 'cunn'
 require 'cudnn'
@@ -15,12 +14,12 @@ cmd:text('Etract VGG features')
 cmd:text()
 cmd:text('Options:')
 
-cmd:option('-nGPU', 3, 'Choose GPU')
+cmd:option('-nGPU', 1, 'Choose GPU')
 cmd:option('-imagePath', 
-           '../data/MSCOCO/test2014/', 
-           'path to images')
+           '/usr1/public/zhiliny/ImageCaptioning/data/train2014/', 
+           'Folder of input images')
 cmd:option('-outPath', 
-           '../data/MSCOCO/test2014_features_vgg_vd19_conv5_2nd/',
+           '../data/train2014_features_vgg_vd19_fc7/',
            'path to save feature vectors') 
 
 opt = cmd:parse(arg or {})
@@ -81,13 +80,9 @@ end
 ---------------------------------------------------------------------------------
 
 -- load models --
-local model = paths.dofile('models/vgg_vd19_fc7.lua')
-torch.save('models/vgg_vd19_fc7_cunn.t7', model)
-
+local model = torch.load('../models/vgg_vd19_fc7.t7')
 print('=> Model')
 print(model)
-os.exit()
-
 
 local idx = 1
 local files = {}
@@ -99,22 +94,10 @@ for file in paths.files(opt.imagePath) do
         local img = extractHook(paths.concat(opt.imagePath, file))
         local vecs = model:forward(img:cuda()):squeeze(1)
         
-        -- save models
+        -- save features
         local name = string.sub(file, 1, file:len()-4)
         torch.save(opt.outPath .. name .. '.dat', vecs)
-        -- os.exit()
-        
+                
         idx = idx + 1
     end
 end
-
-
-
-
-
-
-
-
-
-
-
