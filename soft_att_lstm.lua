@@ -7,121 +7,6 @@ local eval_utils = require 'eval.neuraltalk2.misc.utils'
 local tablex = require 'pl.tablex'
 
 local M = {}
--- local ATT_NEXT_H = false
-
--- cmd:option('-emb_size', 100, 'Word embedding size')
--- cmd:option('-lstm_size', 4096, 'LSTM size')
--- cmd:option('-word_cnt', 9520, 'Vocabulary size')
--- cmd:option('-att_size', 196, 'Attention size')
--- cmd:option('-feat_size', 512, 'Feature size for each attention')
--- cmd:option('-batch_size', 32, 'Batch size in SGD')
-function M.soft_att_lstm(opt)
-    -- Model parameters
-    local feat_size = opt.feat_size
-    local att_size = opt.att_size
-    local batch_size = opt.batch_size
-    local rnn_size = opt.lstm_size
-    local input_size = opt.emb_size
-
-    local x = nn.Identity()()         -- batch * input_size -- embedded caption at a specific step
-    local att_seq = nn.Identity()()   -- batch * att_size * feat_size -- the image patches
-    local prev_c = nn.Identity()()
-    local prev_h = nn.Identity()()
-
-    ------------ Attention part --------------------
-    local att = nn.View(-1, feat_size)(att_seq)
-    att = nn.Linear(feat_size, rnn_size)(att)
-    att = nn.View(-1, att_size, rnn_size)(att)          -- batch * att_size * rnn_size <- batch * att_size * feat_size
-
-    local dot = nn.MixtureTable(3){prev_h, att}         -- batch * att_size <- (batch * rnn_size, batch * att_size * rnn_size)
-    local weight = nn.SoftMax()(dot)                    -- batch * att_size
-    local att_seq_t = nn.Transpose({2, 3})(att_seq)             -- batch * rnn_size * att_size
-    local att_res = nn.MixtureTable(3){weight, att_seq_t}       -- batch * rnn_size <- (batch * att_size, batch * rnn_size * att_size)
-    
-    --- Input to LSTM
-    local att_add = nn.Linear(feat_size, 4 * rnn_size)(att_res)    -- batch * (4*rnn_size) <- batch * rnn_size
-
-    ------------- LSTM main part --------------------
-    local i2h = nn.Linear(input_size, 4 * rnn_size)(x)
-    local h2h = nn.Linear(rnn_size, 4 * rnn_size)(prev_h)
-    
-    -- test
-    -- local prev_all_input_sums = nn.CAddTable()({i2h, h2h})
-    -- local all_input_sums = nn.CAddTable()({prev_all_input_sums, att_add})
-
-    local all_input_sums = nn.CAddTable()({i2h, h2h, att_add})
-
-    local sigmoid_chunk = nn.Narrow(2, 1, 3 * rnn_size)(all_input_sums)
-    sigmoid_chunk = nn.Sigmoid()(sigmoid_chunk)
-    local in_gate = nn.Narrow(2, 1, rnn_size)(sigmoid_chunk)
-    local forget_gate = nn.Narrow(2, rnn_size + 1, rnn_size)(sigmoid_chunk)
-    local out_gate = nn.Narrow(2, 2 * rnn_size + 1, rnn_size)(sigmoid_chunk)
-
-    local in_transform = nn.Narrow(2, 3 * rnn_size + 1, rnn_size)(all_input_sums)
-    in_transform = nn.Tanh()(in_transform)
-
-    local next_c = nn.CAddTable()({
-        nn.CMulTable()({forget_gate, prev_c}),
-        nn.CMulTable()({in_gate,     in_transform})
-    })
-    local next_h = nn.CMulTable()({out_gate, nn.Tanh()(next_c)}) -- batch * rnn_size
-    
-    return nn.gModule({x, att_seq, prev_c, prev_h}, {next_c, next_h})
-end
-
--- New attention model
-function M.soft_att_lstm_2(opt)
-    -- Model parameters
-    local feat_size = opt.feat_size
-    local att_size = opt.att_size
-    local batch_size = opt.batch_size
-    local rnn_size = opt.lstm_size
-    local input_size = opt.emb_size
-
-    local x = nn.Identity()()         -- batch * input_size -- embedded caption at a specific step
-    local att_seq = nn.Identity()()   -- batch * att_size * feat_size -- the image patches
-    local prev_c = nn.Identity()()
-    local prev_h = nn.Identity()()
-
-    ------------ Attention part --------------------
-    -- Transfer hidden state to 512-d
-    local att_h = nn.Linear(rnn_size, feat_size)(prev_h)       -- batch * rnn_size => batch * feat_size    
-    local dot = nn.MixtureTable(3){att_h, att_seq}             -- batch * att_size <- (batch * feat_size, batch * att_size * feat_size)
-    local weight = nn.SoftMax()(dot)                           -- batch * att_size
-    local att_seq_t = nn.Transpose({2, 3})(att_seq)            -- batch * feat_size * att_size
-    local att = nn.MixtureTable(3){weight, att_seq_t}          -- batch * feat_size <- (batch * att_size, batch * rnn_size * att_size)
-    
-    --- Input to LSTM
-    local att_add = nn.Linear(feat_size, 4 * rnn_size)(att)    -- batch * (4*rnn_size) <- batch * feat_size
-
-    ------------- LSTM main part --------------------
-    local i2h = nn.Linear(input_size, 4 * rnn_size)(x)
-    local h2h = nn.Linear(rnn_size, 4 * rnn_size)(prev_h)
-    
-    -- test
-    -- local prev_all_input_sums = nn.CAddTable()({i2h, h2h})
-    -- local all_input_sums = nn.CAddTable()({prev_all_input_sums, att_add})
-
-    local all_input_sums = nn.CAddTable()({i2h, h2h, att_add})
-
-    local sigmoid_chunk = nn.Narrow(2, 1, 3 * rnn_size)(all_input_sums)
-    sigmoid_chunk = nn.Sigmoid()(sigmoid_chunk)
-    local in_gate = nn.Narrow(2, 1, rnn_size)(sigmoid_chunk)
-    local forget_gate = nn.Narrow(2, rnn_size + 1, rnn_size)(sigmoid_chunk)
-    local out_gate = nn.Narrow(2, 2 * rnn_size + 1, rnn_size)(sigmoid_chunk)
-
-    local in_transform = nn.Narrow(2, 3 * rnn_size + 1, rnn_size)(all_input_sums)
-    in_transform = nn.Tanh()(in_transform)
-
-    local next_c = nn.CAddTable()({
-        nn.CMulTable()({forget_gate, prev_c}),
-        nn.CMulTable()({in_gate,     in_transform})
-    })
-    local next_h = nn.CMulTable()({out_gate, nn.Tanh()(next_c)}) -- batch * rnn_size
-    
-    return nn.gModule({x, att_seq, prev_c, prev_h}, {next_c, next_h})
-end
-
 
 -- Attention model, concat hidden and image feature
 function M.soft_att_lstm_concat(opt)
@@ -205,7 +90,6 @@ end
 -- batches: {{id, caption}, ..., ...}
 -------------------------------------
 function M.train(model, opt, batches, val_batches, optim_state, dataloader)
-    local DEBUG_LEN = false
     local params, grad_params
     if opt.lstm_size ~= opt.fc7_size then
         if opt.use_noun then
@@ -266,9 +150,7 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
         local reason_preds = {}
         local reason_pred_mat = torch.CudaTensor(input_text:size()[1], seq_len, out_dim)
         
-        if DEBUG_LEN then print('seq_len', seq_len) end
         for t = 1, seq_len do
-            if DEBUG_LEN then print('Forward time step ' .. t) end
             embeddings[t] = clones.emb[t]:forward(input_text:select(2, t))    -- emb forward
             if opt.use_attention then
                 lstm_c[t], lstm_h[t] = unpack(clones.soft_att_lstm[t]:            -- lstm forward
@@ -307,7 +189,6 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
             local dlstm_h = {}                                        -- output values of LSTM
             
             for t = seq_len, 1, -1 do
-                if DEBUG_LEN then print('Backward time step ' .. t) end
                 local doutput_t = clones.criterion[t]:backward(predictions[t], output_text:select(2, t))  -- criterion backward
                 if t == seq_len then
                     assert(dlstm_h[t] == nil)
@@ -364,10 +245,8 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
     for epoch = 1, opt.nEpochs do
         local index = torch.randperm(#batches)
         for i = 1, #batches do
-            if DEBUG_LEN and #batches[index[i]][1][2] < max_t then goto continue end
             att_seq, fc7_images, input_text, output_text, noun_list = dataloader:gen_train_data(batches[index[i]])
             optim.adagrad(feval, params, optim_state)
-            if DEBUG_LEN then goto continue end
             
             ----------------- Evaluate the model in validation set ----------------
             if i == 1 or i % opt.loss_period == 0 then
@@ -463,8 +342,6 @@ end
 function M.create_model(opt)
     local model = {}
     model.emb = nn.LookupTable(opt.word_cnt, opt.emb_size)
-    -- model.soft_att_lstm = opt.use_attention and M.soft_att_lstm(opt) or M.lstm(opt)
-    -- model.soft_att_lstm = opt.use_attention and M.soft_att_lstm_2(opt) or M.lstm(opt)    -- new attention 
     model.soft_att_lstm = opt.use_attention and M.soft_att_lstm_concat(opt) or M.lstm(opt)
     
     

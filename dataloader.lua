@@ -26,8 +26,6 @@ function DataLoader:__init(opt)
     self.anno_utils = anno_utils
     self.use_noun = opt.use_noun
     self.truncate = opt.truncate
-    self.use_cat = opt.use_cat
-    self.use_google = opt.use_google
     self.jpg = opt.jpg
 
     -- Prepare captions
@@ -35,28 +33,12 @@ function DataLoader:__init(opt)
     self.id2fc7_file, _, _ = anno_utils.read_dataset(self.fc7_dirs, '.dat')
     self.id2captions, self.word2index, self.index2word, self.word_cnt = anno_utils.read_captions(self.anno_dirs, nil)
     opt.word2index = self.word2index
-    if opt.use_cat then
-        self.id2cats, self.cat_cnt = anno_utils.read_cats(self.cat_dir)
-        opt.cat_cnt = self.cat_cnt
-    end
-
-    if opt.jpg then
-        self.jpg_dirs = {}
-        table.insert(self.jpg_dirs, paths.concat(opt.data, opt.train_jpg))
-        table.insert(self.jpg_dirs, paths.concat(opt.data, opt.val_jpg))
-        self.id2jpg, _, _ = anno_utils.read_dataset(self.jpg_dirs, '.dat')
-    end
-
-    -- self.annid2nouns = anno_utils.read_nouns(opt.id2noun_file, self.word2index)
 
     print('Dataset summary:')
     print('id2file size: ' .. tablex.size(self.id2file))
     print('id2captions size: ' .. tablex.size(self.id2captions))
     print('word2index size: '.. tablex.size(self.word2index))
     print('word_cnt: ' .. self.word_cnt)
-    if opt.use_cat then
-        print('cat_cnt: ' .. self.cat_cnt)
-    end
     
     -- This is for model
     opt.word_cnt = self.word_cnt
@@ -82,9 +64,6 @@ function DataLoader:__init(opt)
         self.val_set = server_test_ids
         self.id2file = server_id2file
         self.id2fc7_file = server_id2fc7_file
-        if opt.jpg then
-            self.id2jpg, _, _ = anno_utils.read_dataset({paths.concat(opt.data, opt.test_jpg)}, '.jpg')
-        end
     end
 
     print('validation set size: ' .. tablex.size(self.val_set))
@@ -129,15 +108,9 @@ function DataLoader:gen_train_data(batch)
     local input_text = torch.CudaTensor(#batch, #batch[1][3] + 1)
     local output_text = torch.CudaTensor(#batch, #batch[1][3] + 1)
     local fc7_images = torch.CudaTensor(#batch, self.fc7_size)
-    local fc7_google_images = torch.CudaTensor(#batch, 1024)
-
-    local jpg
-    if self.jpg then jpg = torch.CudaTensor(#batch, 3, 224, 224) end
 
     local noun_list
-    if self.use_cat then
-        noun_list = torch.Tensor(#batch, self.cat_cnt):zero()
-    elseif self.use_noun then
+    if self.use_noun then
         noun_list = torch.Tensor(#batch, self.word_cnt):zero()
     else
         noun_list = nil
@@ -149,16 +122,9 @@ function DataLoader:gen_train_data(batch)
         -- local file = files[id2index[id]]
         local file = self.id2file[id]
         local fc7_file = self.id2fc7_file[id]
-        local fc7_google_file = self.id2fc7_google[id]
         -- from 512*14*14
         images[i]:copy(torch.load(file):reshape(self.feat_size, self.att_size):transpose(1, 2))
         fc7_images[i]:copy(torch.load(fc7_file))
-        fc7_google_images[i]:copy(torch.load(fc7_google_file))
-
-        if self.jpg then
-            local jpg_file = self.id2jpg[id]
-            jpg[i]:copy(torch.load(jpg_file))
-        end
 
         local word_dict = {}
         for j = 1, #caption do
@@ -184,95 +150,23 @@ function DataLoader:gen_train_data(batch)
             end
         end
     end
-    return images, fc7_images, input_text, output_text, noun_list, fc7_google_images, jpg
+    return images, fc7_images, input_text, output_text, noun_list
 end
-
-function DataLoader:gen_train_jpg(batch)
-    local jpg = torch.CudaTensor(#batch, 3, 224, 224)
-
-    local input_text = torch.CudaTensor(#batch, #batch[1][3] + 1)
-    local output_text = torch.CudaTensor(#batch, #batch[1][3] + 1)
-    local noun_list
-    if self.use_cat then
-        noun_list = torch.Tensor(#batch, self.cat_cnt):zero()
-    elseif self.use_noun then
-        noun_list = torch.Tensor(#batch, self.word_cnt):zero()
-    else
-        noun_list = nil
-    end
-
-    for i = 1, #batch do
-        -- caption = {id, caption}
-        local id, ann_id, caption = batch[i][1], batch[i][2], batch[i][3]
-        -- local file = files[id2index[id]]
-        local jpg_file = self.id2jpg[id]
-        -- from 512*14*14
-        jpg[i]:copy(torch.load(jpg_file))
-        local word_dict = {}
-        for j = 1, #caption do
-            input_text[i][j + 1] = caption[j]
-            output_text[i][j] = caption[j]
-            word_dict[caption[j]] = true
-        end
-        input_text[i][1] = anno_utils.START_NUM
-        output_text[i][#caption + 1] = anno_utils.STOP_NUM
-        if self.use_cat then
-            if self.id2cats[id] ~= nil then
-                for k, cat in ipairs(self.id2cats[id]) do
-                    noun_list[i][k] = cat
-                end
-            end
-        elseif self.use_noun then
-            local ind = 1
-            for k, _ in pairs(word_dict) do
-                if k > anno_utils.NUM then
-                    noun_list[i][ind] = k
-                    ind = ind + 1
-                end
-            end
-        end
-    end
-    return jpg, input_text, output_text, noun_list 
-end   
 
 function DataLoader:gen_test_data(j1, j2)
     local images = torch.CudaTensor(j2 - j1 + 1, self.att_size, self.feat_size)
     local fc7_images = torch.CudaTensor(j2 - j1 + 1, self.fc7_size)
-    local fc7_google_images
 
-    local jpg
-    if self.jpg then jpg = torch.CudaTensor(j2 - j1 + 1, 3, 224, 224) end
-
-    if self.use_google then fc7_google_images = torch.CudaTensor(j2 - j1 + 1, 1024) end
     for i = j1, j2 do
         local id = self.val_set[i]
         local file = self.id2file[id]
         local fc7_file = self.id2fc7_file[id]
         images[i - j1 + 1]:copy(torch.load(file):reshape(self.feat_size, self.att_size):transpose(1, 2))
         fc7_images[i - j1 + 1]:copy(torch.load(fc7_file))
-        if self.use_google then
-            local fc7_google_file = self.id2fc7_google[id]
-            fc7_google_images[i - j1 + 1]:copy(torch.load(fc7_google_file))
-        end
-        if self.jpg then
-            local jpg_file = self.id2jpg[id]
-            jpg[i - j1 + 1]:copy(torch.load(jpg_file))
-        end
     end
-    return images, fc7_images, fc7_google_images, jpg
+    return images, fc7_images
 end
-
-function DataLoader:gen_test_jpg(j1, j2)
-    local jpg = torch.CudaTensor(j2 - j1 + 1, 3, 224, 224)
-    for i = j1, j2 do
-        local id = self.val_set[i]
-        local jpg_file = self.id2jpg[id]
-        jpg[i - j1 + 1]:copy(torch.load(jpg_file))
-    end
-    return jpg
-end
-
-                
+             
 -----------------------------------------------------
 -- generate batch with same length for training
 -----------------------------------------------------

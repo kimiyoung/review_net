@@ -85,27 +85,27 @@ function utils.read_ids(filename)
 end
 
 function utils.read_index_split(opt)
-    -- local train_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_train.txt'))
-    -- local val_rest = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_restval.txt'))
-    -- if not opt.train_only then
-    --     for _, id in ipairs(val_rest) do
-    --         table.insert(train_set, id)
-    --     end
-    -- end
-    -- local val_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_val.txt'))
-    -- local test_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_test.txt'))
-    local train_set, val_set, test_set = {}, {}, {}
-    for line in io.open('eval/neuraltalk2/index.txt'):lines() do
-        inputs = utils.mysplit(line)
-        id = tonumber(inputs[1])
-        if inputs[2] == 'train' then
+    local train_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_train.txt'))
+    local val_rest = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_restval.txt'))
+    if not opt.train_only then
+        for _, id in ipairs(val_rest) do
             table.insert(train_set, id)
-        elseif inputs[2] == 'val' then
-            table.insert(val_set, id)
-        else
-            table.insert(test_set, id)
         end
     end
+    local val_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_val.txt'))
+    local test_set = utils.read_ids(paths.concat(opt.arctic_dir, 'coco_test.txt'))
+    -- local train_set, val_set, test_set = {}, {}, {}
+    -- for line in io.open('eval/neuraltalk2/index.txt'):lines() do
+    --     inputs = utils.mysplit(line)
+    --     id = tonumber(inputs[1])
+    --     if inputs[2] == 'train' then
+    --         table.insert(train_set, id)
+    --     elseif inputs[2] == 'val' then
+    --         table.insert(val_set, id)
+    --     else
+    --         table.insert(test_set, id)
+    --     end
+    -- end
 
     return train_set, val_set, test_set
 end
