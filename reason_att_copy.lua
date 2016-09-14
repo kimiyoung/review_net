@@ -428,7 +428,7 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
                     j1 = j2 + 1
                 end
 
-                local eval_struct = M.language_eval(captions, 'attention')
+                local eval_struct = M.language_eval(captions, 'review_untie')
                 local bleu_4
                 if opt.early_stop == 'cider' then
                     bleu_4 = eval_struct.CIDEr
