@@ -52,11 +52,11 @@ function M.parse(arg)
     cmd:option('-max_eval_batch', 50, 'max number of instances when calling comp error. 20000 = 4000 * 5')
 
     cmd:option('-save_file', false, 'whether save model file?')
-    cmd:option('-save_file_name', 'review.vgg16.model', 'file name for saving model')
+    cmd:option('-save_file_name', 'review.vgg19.model', 'file name for saving model')
 
     cmd:option('-load_file', false, 'whether load model file?')
     cmd:option('-load_vgg_file', false)
-    cmd:option('-load_file_name', 'review.vgg16.model')
+    cmd:option('-load_file_name', 'review.vgg19.model')
 
     cmd:option('-train_only', false, 'if true then use 80k, else use 110k')
     cmd:option('-early_stop', 'cider', 'can be cider or bleu')
