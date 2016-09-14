@@ -241,7 +241,7 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
         return loss, loss_2
     end
     
-    local max_bleu_4 = 0
+    local max_bleu_4 = -1
     for epoch = 1, opt.nEpochs do
         local index = torch.randperm(#batches)
         for i = 1, #batches do
