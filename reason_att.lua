@@ -257,6 +257,7 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
         if opt.use_noun then
             out_dim = opt.use_noun and opt.word_cnt or opt.cat_cnt
             reason_pred_mat = torch.CudaTensor(input_text:size()[1], opt.reason_step, out_dim)
+        end
         
         for t = 1, reason_len do
             reason_c[t], reason_h[t] = unpack(clones.soft_att_lstm[t]:
