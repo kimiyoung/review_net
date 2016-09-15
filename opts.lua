@@ -19,7 +19,7 @@ function M.parse(arg)
     cmd:option('-test_size', 4000, 'Test set size')
 
     cmd:option('-use_attention', true, 'Use attention or not')
-    cmd:option('-use_noun', true, 'Use noun or not') -- true
+    cmd:option('-use_disc', true, 'Use discriminative supervision or not') -- true
     cmd:option('-reason_weight', 10.0, 'weight of reasoning loss')
 
     cmd:option('-model_pack', 'reason_att_copy', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
@@ -80,6 +80,7 @@ function M.parse(arg)
     if opt.server_test_mode then opt.test_mode = false end
     if opt.server_train_mode then opt.test_mode = false end
     opt.model = opt.load_file_name
+    opt.use_noun = opt.use_disc
     return opt
 end
 
