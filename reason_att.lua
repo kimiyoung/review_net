@@ -250,11 +250,13 @@ function M.train(model, opt, batches, val_batches, optim_state, dataloader)
         local reason_h = {[0] = image_map}
         local reason_h_att = torch.CudaTensor(input_text:size()[1], opt.reason_step, opt.lstm_size)
         local embeddings, lstm_c, lstm_h, predictions, reason_preds = {}, {}, {}, {}, {}
-        local out_dim = opt.use_noun and opt.word_cnt or opt.cat_cnt
-        local reason_pred_mat = torch.CudaTensor(input_text:size()[1], opt.reason_step, out_dim)
         local loss = 0
         local seq_len = math.min(input_text:size()[2], max_t)
         local reason_len = opt.reason_step
+        local out_dim, reason_pred_mat
+        if opt.use_noun then
+            out_dim = opt.use_noun and opt.word_cnt or opt.cat_cnt
+            reason_pred_mat = torch.CudaTensor(input_text:size()[1], opt.reason_step, out_dim)
         
         for t = 1, reason_len do
             reason_c[t], reason_h[t] = unpack(clones.soft_att_lstm[t]:
