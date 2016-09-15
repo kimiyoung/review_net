@@ -1,5 +1,7 @@
 # ReviewNet -- Reviewer Module for Caption Generation
 
+## Introduction
+
 This repo is an implementation of the Encode-Review-Decode model proposed in the following paper:
 
 [Encode, Review, and Decode: Reviewer Module for Caption Generation](https://arxiv.org/abs/1605.07912)
@@ -8,7 +10,7 @@ Zhilin Yang, Ye Yuan, Yuexin Wu, Ruslan Salakhutdinov, William W. Cohen
 
 NIPS 2016
 
-# Dependencies
+## Dependencies
 #### Torch
 The code is written in [Torch](http://torch.ch/). If you use Unix-like system, you can install it in this way:
 ```
@@ -45,7 +47,7 @@ Then install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
 $ luarocks install cudnn
 ```
 
-# Data Pre-processing
+## Data Pre-processing
 For this implementation, we do not back-propagate the gradients to the CNN encoder, and extract CNN features from raw images using VGGNet.
 
 First you can download the [MSCOCO dataset](http://mscoco.org/dataset/#download). The follow instructions will assume that you put the training/dev/test images (*.jpg files) in `data/train2014_jpg`, `data/val2014_jpg`, and `data/test2014_jpg` respectively.
@@ -70,7 +72,7 @@ th feature_extractor.lua -imagePath data/test2014_jpg/ -outPath data/test2014_fe
 
 We use the same data splits as http://arxiv.org/abs/1502.03044 in the following sections. We do early stopping on the dev set, and evaluate the models on the test set.
 
-# Training
+## Training
 
 There are several models available in this repository. `soft_att_lstm` refers to the [Soft Attention model](http://arxiv.org/abs/1502.03044), `reason_att` refers to the [Encode-Reivew-Decode (ERD) model](https://arxiv.org/abs/1605.07912), and `reason_att_copy` refers to the ERD model with untied weights. In our experiments, `reason_att_copy` gives the best performance.
 
@@ -80,7 +82,7 @@ th <model>.lua -save_file -save_file_name <filename>
 ```
 where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for saving the trained models. The model that performs the best on the dev set will be saved.
 
-# Test
+## Test
 
 To test a model, run
 ```
@@ -88,7 +90,7 @@ th <model>_eval.lua -load_file -load_file_name <filename> -test_mode
 ```
 where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for loading the trained models. The option `-test_mode` is telling the data loader to take care of data splits.
 
-# Misc
+## Misc
 
 The default configuration of hyper-parameters can be used to reproduce the results in our paper for the offline evaluation experiments. For more options, please refer to `opts.lua` for more details.
 
