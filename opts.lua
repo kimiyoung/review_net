@@ -19,10 +19,10 @@ function M.parse(arg)
     cmd:option('-test_size', 4000, 'Test set size')
 
     cmd:option('-use_attention', true, 'Use attention or not')
-    cmd:option('-use_noun', true, 'Use noun or not') -- true
+    cmd:option('-use_noun', false, 'Use noun or not') -- true
     cmd:option('-reason_weight', 10.0, 'weight of reasoning loss')
 
-    cmd:option('-model_pack', 'reason_att_copy', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
+    cmd:option('-model_pack', 'soft_att_lstm', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
     cmd:option('-reason_step', 8, 'Reasoning steps before the decoder')
 
     ------------ General options --------------------
@@ -51,8 +51,8 @@ function M.parse(arg)
     cmd:option('-truncate', 30, 'Text longer than this size gets truncated. -1 for no truncation.') -- 30
     cmd:option('-max_eval_batch', 50, 'max number of instances when calling comp error. 20000 = 4000 * 5')
 
-    cmd:option('-save_file', false, 'whether save model file?')
-    cmd:option('-save_file_name', 'review.vgg19.model', 'file name for saving model')
+    cmd:option('-save_file', true, 'whether save model file?')
+    cmd:option('-save_file_name', 'soft_att_lstm.model', 'file name for saving model')
 
     cmd:option('-load_file', false, 'whether load model file?')
     cmd:option('-load_vgg_file', false)
