@@ -78,17 +78,23 @@ There are several models available in this repository. `soft_att_lstm` refers to
 
 To train a model, run
 ```
-th <model>.lua -save_file -save_file_name <filename>
+th main.lua -model_pack <model> -save_file -save_file_name <filename>
 ```
 where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for saving the trained models. The model that performs the best on the dev set will be saved.
 
 ## Test
 
-To test a model, run
+To test a model with beam search, run
 ```
 th <model>_eval.lua -load_file -load_file_name <filename> -test_mode
 ```
 where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for loading the trained models. The option `-test_mode` is telling the data loader to take care of data splits.
+
+To test a model with greedy search, run
+```
+th main.lua -model_pack <model> -load_file -load_file_name <filename> -test_mode -LR 0
+```
+where we set the learning rate at 0 to obtain an evaluation. You have to manually stop the program after the first iteration.
 
 ## Misc
 
