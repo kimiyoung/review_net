@@ -26,13 +26,13 @@ $ luarocks install paths
 ```
 
 #### GPU Support
-If you want to use NVIDIA GPUs to accelerate trainig and testing, you will also need to install following packages:
+Since we use NVIDIA GPUs to accelerate trainig and testing, you will also need to install following packages:
 ```
 $ luarocks install cutorch
 $ luarocks install cunn
 ```
 
-To make things even faster, you can also install NVIDIA cuDNN libraries. You should: 
+To make things even faster, you need to also install NVIDIA cuDNN libraries. You should: 
 * Install cuDNN (version R5 EA)
 * Have at least CUDA 7.0
 * Have `libcudnn.so` in your library path (Install it from https://developer.nvidia.com/cuDNN )
@@ -42,16 +42,33 @@ Then install [`cudnn`](https://github.com/soumith/cudnn.torch) package:
 $ luarocks install cudnn
 ```
 
-# How to train
-#### Data Pre-processing
-As we will not train the encoder part, we need to extract CNN features from raw images. To use the feature extractor:
+# Data Pre-processing
+For this implementation, we do not back-propagate the gradients to the CNN encoder, and extract CNN features from raw images using VGGNet.
+
+First you can download the [MSCOCO dataset](http://mscoco.org/dataset/#download). The follow instructions will assume that you put the training/dev/test images (*.jpg files) in `data/train2014_jpg`, `data/val2014_jpg`, and `data/test2014_jpg` respectively.
+
+Then download the VGGNet pretrained models. We would like to extract both the fc7 and conv5 features, so we have two pretrained models (the conv5 model is a subset of the fc7 model).
 ```
-$ th feature_extractor.lua -imagePath path/to/images -outPath path/to/feature -model path/to/model
+mkdir models
+cd models
+wget http://kimi.ml.cmu.edu/vgg_vd19_conv5.t7
+wget http://kimi.ml.cmu.edu/vgg_vd19_fc7.t7
 ```
-The script will extract features from images and save it in the folder you specify.
+
+When the jpg files and the pretrained models are ready, we can now extract the features.
+```
+th feature_extractor.lua -imagePath data/train2014_jpg/ -outPath data/train2014_features_vgg_vd19_conv5/ -model models/vgg_vd19_conv5.t7
+th feature_extractor.lua -imagePath data/val2014_jpg/ -outPath data/val2014_features_vgg_vd19_conv5/ -model models/vgg_vd19_conv5.t7
+th feature_extractor.lua -imagePath data/test2014_jpg/ -outPath data/test2014_features_vgg_vd19_conv5/ -model models/vgg_vd19_conv5.t7
+th feature_extractor.lua -imagePath data/train2014_jpg/ -outPath data/train2014_features_vgg_vd19_fc7/ -model models/vgg_vd19_fc7.t7
+th feature_extractor.lua -imagePath data/val2014_jpg/ -outPath data/val2014_features_vgg_vd19_fc7/ -model models/vgg_vd19_fc7.t7
+th feature_extractor.lua -imagePath data/test2014_jpg/ -outPath data/test2014_features_vgg_vd19_fc7/ -model models/vgg_vd19_fc7.t7
+```
 
 
-# How to test
+# Training
+
+# Test
 
 
 # License
