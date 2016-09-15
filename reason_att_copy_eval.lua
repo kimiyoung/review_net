@@ -234,8 +234,6 @@ function beam_search(model, dataloader, opt)
         else
             table.insert(captions, {image_id = dataloader.val_set[i], caption = caption})
         end
-
-        if i > 10 then break end -- DEBUG ONLY!
     end
     if BATCH_MODE then
         fout:close()

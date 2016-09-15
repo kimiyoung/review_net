@@ -29,11 +29,11 @@ function M.parse(arg)
     cmd:option('-data', '/usr1/public/zhiliny/ImageCaptioning/data/', 'Path to dataset')
     cmd:option('-train_feat', 'train2014_features_vgg_vd19_conv5', 'Path to pre-extracted training image feature')
     cmd:option('-val_feat', 'val2014_features_vgg_vd19_conv5', 'Path to pre-extracted validation image feature')
-    cmd:option('-test_feat', 'test2014_features_vgg_vd19_conv5_2nd', 'Path to pre-extracted test image feature')
+    cmd:option('-test_feat', 'test2014_features_vgg_vd19_conv5', 'Path to pre-extracted test image feature')
 
     cmd:option('-train_fc7', 'train2014_features_vgg_vd19_fc7', 'Path to pre-extracted training fully connected 7')
     cmd:option('-val_fc7', 'val2014_features_vgg_vd19_fc7', 'Path to pre-extracted validation fully connected 7')
-    cmd:option('-test_fc7', 'test2014_features_vgg_vd19_fc7_2nd', 'Path to pre-extracted test fully connected 7')
+    cmd:option('-test_fc7', 'test2014_features_vgg_vd19_fc7', 'Path to pre-extracted test fully connected 7')
 
     cmd:option('-train_anno', 'annotations/captions_train2014.json', 'Path to training image annotaion file')
     cmd:option('-val_anno', 'annotations/captions_val2014.json', 'Path to validation image annotaion file')
