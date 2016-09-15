@@ -19,14 +19,14 @@ function M.parse(arg)
     cmd:option('-test_size', 4000, 'Test set size')
 
     cmd:option('-use_attention', true, 'Use attention or not')
-    cmd:option('-use_noun', false, 'Use noun or not') -- true
+    cmd:option('-use_disc', false, 'Use discriminative supervision or not')
     cmd:option('-reason_weight', 10.0, 'weight of reasoning loss')
 
     cmd:option('-model_pack', 'reason_att', 'the model package to use, can be reason_att, reasoning, or soft_att_lstm')
     cmd:option('-reason_step', 8, 'Reasoning steps before the decoder')
 
     ------------ General options --------------------
-    cmd:option('-data', '/usr1/public/zhiliny/ImageCaptioning/data/', 'Path to dataset')
+    cmd:option('-data', 'data/', 'Path to dataset')
     cmd:option('-train_feat', 'train2014_features_vgg_vd19_conv5', 'Path to pre-extracted training image feature')
     cmd:option('-val_feat', 'val2014_features_vgg_vd19_conv5', 'Path to pre-extracted validation image feature')
     cmd:option('-test_feat', 'test2014_features_vgg_vd19_conv5', 'Path to pre-extracted test image feature')
@@ -59,7 +59,6 @@ function M.parse(arg)
     cmd:option('-load_file_name', 'review.vgg19.model')
 
     cmd:option('-train_only', false, 'if true then use 80k, else use 110k')
-    cmd:option('-early_stop', 'cider', 'can be cider or bleu')
     cmd:option('-gen_dropout', 0.1) -- 0.1
     
     ------------ Evaluation options --------------------
@@ -80,6 +79,7 @@ function M.parse(arg)
     if opt.server_test_mode then opt.test_mode = false end
     if opt.server_train_mode then opt.test_mode = false end
     opt.model = opt.load_file_name
+    opt.use_noun = opt.use_disc
     return opt
 end
 
