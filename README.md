@@ -1,9 +1,12 @@
-# ReviewNet
-Reviewer Module for Caption Generation
+# ReviewNet -- Reviewer Module for Caption Generation
 
+This repo is an implementation of the Encode-Review-Decode model proposed in the following paper:
 
+[Encode, Review, and Decode: Reviewer Module for Caption Generation](https://arxiv.org/abs/1605.07912)
 
-# Overview
+Zhilin Yang, Ye Yuan, Yuexin Wu, Ruslan Salakhutdinov, William W. Cohen
+
+NIPS 2016
 
 # Dependencies
 #### Torch
@@ -65,10 +68,29 @@ th feature_extractor.lua -imagePath data/val2014_jpg/ -outPath data/val2014_feat
 th feature_extractor.lua -imagePath data/test2014_jpg/ -outPath data/test2014_features_vgg_vd19_fc7/ -model models/vgg_vd19_fc7.t7
 ```
 
+We use the same data splits as http://arxiv.org/abs/1502.03044 in the following sections. We do early stopping on the dev set, and evaluate the models on the test set.
 
 # Training
 
+There are several models available in this repository. `soft_att_lstm` refers to the [Soft Attention model](http://arxiv.org/abs/1502.03044), `reason_att` refers to the [Encode-Reivew-Decode (ERD) model](https://arxiv.org/abs/1605.07912), and `reason_att_copy` refers to the ERD model with untied weights. In our experiments, `reason_att_copy` gives the best performance.
+
+To train a model, run
+```
+th <model>.lua -save_file -save_file_name <filename>
+```
+where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for saving the trained models. The model that performs the best on the dev set will be saved.
+
 # Test
 
+To test a model, run
+```
+th <model>_eval.lua -load_file -load_file_name <filename> -test_mode
+```
+where `<model>` can be `soft_att_lstm`, `reason_att`, or `reason_att_copy`, and `<filename>` is a path to the filename for loading the trained models. The option `-test_mode` is telling the data loader to take care of data splits.
 
-# License
+# Misc
+
+The default configuration of hyper-parameters can be used to reproduce the results in our paper for the offline evaluation experiments. For more options, please refer to `opts.lua` for more details.
+
+Our code base uses the data splits from https://github.com/kelvinxu/arctic-captions, and the evaluation scipts from https://github.com/karpathy/neuraltalk2. Some of the model implementation is inspired by https://github.com/oxford-cs-ml-2015/practical6.
+
