@@ -59,7 +59,6 @@ function M.parse(arg)
     cmd:option('-load_file_name', 'review.vgg19.model')
 
     cmd:option('-train_only', false, 'if true then use 80k, else use 110k')
-    cmd:option('-early_stop', 'cider', 'can be cider or bleu')
     cmd:option('-gen_dropout', 0.1) -- 0.1
     
     ------------ Evaluation options --------------------
