@@ -38,7 +38,7 @@ function M.parse(arg)
     cmd:option('-train_anno', 'annotations/captions_train2014.json', 'Path to training image annotaion file')
     cmd:option('-val_anno', 'annotations/captions_val2014.json', 'Path to validation image annotaion file')
     cmd:option('-nGPU', 1, 'Index of GPU to use, 0 means CPU')
-    cmd:option('-seed', 13, 'Random number seed')
+    cmd:option('-seed', 123, 'Random number seed')
 
     cmd:option('-arctic_dir', 'arctic-captions/splits', 'Path to index file')
 
