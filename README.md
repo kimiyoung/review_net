@@ -32,6 +32,16 @@ In the repo we also release a dataset with train/dev/test splits, along with the
 
 Check out the directory `code_caption`.
 
+Below is a comparison with baselines on the code captioning dataset:
+
+| Model | LLH | CS-1 | CS-2 | CS-3 | CS-4 | CS-5 |
+|----|----|----|----|----|----|----|
+| LSTM Language Model | -5.34 | 0.2340 | 0.2763 | 0.3000 | 0.3153 | 0.3290 |
+| Encoder-Decoder | -5.25 | 0.2535 | 0.2976 | 0.3201 | 0.3367 | 0.3507 |
+| Encoder-Decoder (Bidir) | -5.19 | 0.2632 | 0.3068 | 0.3290 | 0.3442 | 0.3570 |
+| Attentive Encoder-Decoder (Bidir) | -5.14 | 0.2716 | 0.3152 | 0.3364 | 0.3523 | 0.3651 |
+| Review Net | **-5.06** | **0.2889** | **0.3361** | **0.3579** | **0.3731** | **0.3840** |
+
 
 ## References
 
