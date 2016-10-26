@@ -88,7 +88,7 @@ The files will be stored under `server_test`. You can run
 ```
 python gen_js.py
 ```
-to generate the final submission file.
+to generate the final submission file `server_test/captions_test2014_reviewnet_results.json`.
 
 ## Misc
 
