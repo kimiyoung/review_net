@@ -7,7 +7,7 @@ You can use the code in this repo to genearte a MSCOCO evaluation server submiss
 No fine-tuning required. No fancy tricks. Just train three end-to-end review networks and do an ensemble.
 
 + Feature extraction: 2 hours in parallel
-+ Single model training: 6 hours in parallel
++ Single model training: 6 hours
 + Ensemble model training: 30 mins
 + Beam search for caption generation: 3 hours in parallel
 
