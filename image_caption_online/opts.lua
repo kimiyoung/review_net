@@ -81,9 +81,9 @@ function M.parse(arg)
     cmd:option('-nEpochs', 100, 'Number of epochs in training') -- 100
     -- cmd:option('-eval_period', 12000, 'Every certain period, evaluate current model')
     -- cmd:option('-loss_period', 2400, 'Every given number of iterations, compute the loss on train and test')
-    cmd:option('-batch_size', 1, 'Batch size in SGD') -- 32
+    cmd:option('-batch_size', 32, 'Batch size in SGD') -- 32
     cmd:option('-val_batch_size', 10, 'Batch size for testing')
-    cmd:option('-LR', 0, 'Initial learning rate') -- 1e-2
+    cmd:option('-LR', 1e-2, 'Initial learning rate') -- 1e-2
     cmd:option('-cnn_LR', 0, 'Learning rate for cnn') --
     cmd:option('-truncate', 30, 'Text longer than this size gets truncated. -1 for no truncation.')
     cmd:option('-max_eval_batch', 50, 'max number of instances when calling comp error. 20000 = 4000 * 5')
@@ -123,6 +123,9 @@ function M.parse(arg)
     cmd:option('-test_mode', false, 'eval on test set if true') --
     cmd:option('-server_train_mode', false, 'eval on test of val, and use the rest for training')
     cmd:option('-server_test_mode', false, 'eval on server test set if true; if true then test_mode will be false.')
+
+    cmd:option('-batch_num', 4)
+    cmd:option('-cur_batch_num', 1)
     
     local opt = cmd:parse(arg or {})
     opt.eval_period = math.floor(3000 * 32 / 32) * 2

@@ -70,7 +70,7 @@ th main.lua -save_file_name reason_att_copy_simp_seed33.model -seed 33 -server_t
 
 Then we train an ensemble model
 ```
-th ensemble.lua -batch_size 1 -ensemble_train_mode
+th ensemble.lua -batch_size 1 -ensemble_train_mode -save_file_name reason_att_copy_simp_ensemble13_23_33.model
 ```
 
 ## Evaluation

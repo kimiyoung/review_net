@@ -64,7 +64,7 @@ function beam_search(model_set, model, dataloader, opt)
     end
 
     local START, END = 1, #dataloader.val_set
-    local BATCH_NUM, MY_BATCH_NUM = 4, 1
+    local BATCH_NUM, MY_BATCH_NUM = opt.batch_num, opt.cur_batch_num
     local fout
     local captions = {}
     evaluate()
