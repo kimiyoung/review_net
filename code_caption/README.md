@@ -12,6 +12,8 @@ where `train.dat`, `dev.dat`, and `test.dat` corresponds to training, developmen
 <tokenized_code_separated_by_space>\t<tokenized_comment_separated_by_space>
 ```
 
+The dataset is constructed based on https://github.com/habeascorpus/habeascorpus-data-withComments.git.
+
 ## Training
 
 We can train the model with the following command
