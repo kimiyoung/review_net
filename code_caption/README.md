@@ -1,20 +1,16 @@
 
 ## Download Data
 
-We download the source code with comments from a github repo.
+You can download the data by
 ```
-git clone https://github.com/habeascorpus/habeascorpus-data-withComments.git
+wget http://kimi.ml.cmu.edu/code_data/train.dat
+wget http://kimi.ml.cmu.edu/code_data/dev.dat
+wget http://kimi.ml.cmu.edu/code_data/test.dat
 ```
-
-## Data Preprocessing
-
-Then we run a script to preprocess the dataset and split it into train, dev, and test sets.
-
+where `train.dat`, `dev.dat`, and `test.dat` corresponds to training, development, and test sets respectively. Each data file is in the following format:
 ```
-python code_proc.py
+<tokenized_code_separated_by_space>\t<tokenized_comment_separated_by_space>
 ```
-
-Three files, `train.dat`, `dev.dat`, and `test.dat` will be extracted to the current directory.
 
 ## Training
 
@@ -28,6 +24,12 @@ The best model on the dev set will be saved.
 
 ## Evaluation
 
+In order to evaluate our model, we need to compute the CS-k metrics. For better performance, we need to do precomputation for string prefixes.
+```
+th comp_prefix.lua
+```
+
+Then we can do evaluation,
 ```
 th eval.lua
 ```
