@@ -94,5 +94,5 @@ to generate the final submission file `server_test/captions_test2014_reviewnet_r
 
 The default configuration of hyper-parameters can be used to reproduce our results on the MSCOCO evaluation server.
 
-Our code base uses the data splits and the evaluation scipts from https://github.com/karpathy/neuraltalk2. Some of the model implementation is inspired by https://github.com/oxford-cs-ml-2015/practical6.
+Our code base uses the data splits and the evaluation scipts from https://github.com/karpathy/neuraltalk2. Some of the model implementation is inspired by https://github.com/oxford-cs-ml-2015/practical6. The inception v3 net is from https://github.com/Moodstocks/inception-v3.torch.git.
 
