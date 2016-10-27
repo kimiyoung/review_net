@@ -47,7 +47,7 @@ Below is a comparison with baselines on the code captioning dataset:
 
 This repo contains the code and data used in the following paper:
 
-[Review Network for Caption Generation](https://arxiv.org/abs/1605.07912)
+[Review Networks for Caption Generation](https://arxiv.org/abs/1605.07912)
 
 Zhilin Yang, Ye Yuan, Yuexin Wu, Ruslan Salakhutdinov, William W. Cohen
 
