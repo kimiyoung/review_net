@@ -1,7 +1,7 @@
 
 function max_common(s1, s2)
     for i = 1, math.min(s1:len(), s2:len()) do
-        if s1[i] ~= s2[i] then return i - 1 end
+        if s1:sub(i,i) ~= s2:sub(i,i) then return i - 1 end
     end
     return math.min(s1:len(), s2:len())
 end
